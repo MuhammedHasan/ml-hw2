@@ -39,5 +39,9 @@ class MarkowModel:
     def Qs(self, i, j, previous_grid):
         return map(lambda x: (x, self.Q(i, j, x, previous_grid)), self.actions)
 
+    def optimal_polity(self):
+        for i in range(100):
+            self.next_V()
+
     def __str__(self):
         return ''.join(str(i) + '\n' for i in self.polities)
