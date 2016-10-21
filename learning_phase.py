@@ -6,13 +6,18 @@ import operator
 import cPickle as pickle
 from feature_extraction import *
 import itertools
+from sklearn.metrics import accuracy_score
 
 
 dataset = pickle.load(open('training_data.p', 'rb'))
-points = list(itertools.product(range(1, 7), range(1, 7)))
+points = list(itertools.product(range(1, 7)[::-1], range(1, 7)))
 
-X = np.array([feature_set(p, s[0]) for p in points for s in dataset.values()])
-y = np.array([s[1][p] for p in points for s in dataset.values()])
+
+X = [feature_set(p, s[0]) for p in points for s in dataset.values()]
+y = [s[1][p] for p in points for s in dataset.values()]
+
+X = np.array(X)
+y = np.array(y)
 
 sc = StandardScaler()
 sc.fit(X)
@@ -41,10 +46,12 @@ def check_accurcy():
 
     test_y = np.array([i[1][p] for p in points for i in testset.values()])
 
-    predicted_y = [eveluate_model(i[0]).values() for i in testset.values()]
-    predicted_y = np.array(reduce(operator.add, predicted_y))
+    predicted_y = []
+    for i in testset.values():
+        em = eveluate_model(i[0])
+        predicted_y += [em[p] for p in points]
 
-    print test_y
-    print predicted_y
+    # predicted_y = [eveluate_model(i[0]) for i in testset.values()]
+    # predicted_y = np.array(reduce(operator.add, predicted_y))
 
-    return sum(test_y == predicted_y) / float(test_y.size)
+    return accuracy_score(predicted_y, test_y)
