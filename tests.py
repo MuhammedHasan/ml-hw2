@@ -2,13 +2,14 @@ import unittest
 import feature_extraction
 import learning_phase
 import cPickle as pickle
+import custom_model
 
 
 class TestFeatureExtraction(unittest.TestCase):
 
     def setUp(self):
-        self.point = (2, 3)
-        self.point1 = (1, 3)
+        self.point = (5, 3)
+        self.point1 = (6, 3)
         self.matrix = [
             [2, 2, 2, 2, 2, 2, 2, 2],
             [2, 0, 0, 0, 0, 0, 0, 2],
@@ -42,7 +43,7 @@ class TestFeatureExtraction(unittest.TestCase):
         self.assertAlmostEqual(f9, 5.83095189)
 
 
-class LearningPhaseExtraction(unittest.TestCase):
+class TestLearningPhase(unittest.TestCase):
 
     def setUp(self):
         self.matrix = [
@@ -56,15 +57,41 @@ class LearningPhaseExtraction(unittest.TestCase):
             [2, 2, 2, 2, 2, 2, 2, 2],
         ]
 
-    def tests_(self):
+    def tests_model_(self):
+        predictions = learning_phase.eveluate_model(self.matrix)
+        self.assertTrue(predictions)
 
-        print learning_phase.check_accurcy()
+        cro_val_acc = learning_phase.check_accurcy(dataset='training_data')
+        print '\ndefault model'
+        print 'cross validation accuracy:', cro_val_acc
+        print 'test accuracy:', learning_phase.check_accurcy()
 
-        # predictions = learning_phase.eveluate_model(self.matrix)
-        #
-        # print predictions
 
-        # self.assertTrue(model)
+class TestCustomModel(unittest.TestCase):
+
+    def setUp(self):
+        self.matrix = [
+            [2, 2, 2, 2, 2, 2, 2, 2],
+            [2, 0, 0, 0, 0, 0, 0, 2],
+            [2, 0, 1, 0, 0, 0, 0, 2],
+            [2, 0, 1, 0, 1, 0, 0, 2],
+            [2, 1, 0, 0, 0, 0, 0, 2],
+            [2, 0, 0, 0, 1, 0, 1, 2],
+            [2, 0, 0, 1, 0, 0, 3, 2],
+            [2, 2, 2, 2, 2, 2, 2, 2],
+        ]
+
+    def tests_model_(self):
+        predictions = learning_phase.eveluate_model(self.matrix)
+        self.assertTrue(predictions)
+
+        cro_val_acc = learning_phase.check_accurcy(
+            dataset='training_data', model=custom_model.eveluate_model)
+
+        print '\ncustom model'
+        print 'cross validation accuracy:', cro_val_acc
+        print 'test accuracy:', learning_phase.check_accurcy(
+            model=custom_model.eveluate_model)
 
 if __name__ == '__main__':
     unittest.main()

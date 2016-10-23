@@ -1,33 +1,34 @@
 # -*- coding: utf-8 -*-
 from sklearn.svm import SVC
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import StandardScaler, MinMaxScaler
 import numpy as np
 import operator
 import cPickle as pickle
 from feature_extraction import *
 import itertools
 from sklearn.metrics import accuracy_score
+from sklearn.pipeline import Pipeline
+
+points = list(itertools.product(range(1, 7), range(1, 7)))
 
 
-dataset = pickle.load(open('training_data.p', 'rb'))
-points = list(itertools.product(range(1, 7)[::-1], range(1, 7)))
+def train_model(feature_selection=feature_set):
+    dataset = pickle.load(open('training_data.p', 'rb'))
+
+    X = np.array([feature_selection(p, s[0])
+                  for s in dataset.values() for p in points])
+    y = np.array([s[1][p] for s in dataset.values() for p in points])
+
+    svm = Pipeline([
+        ('scaler', StandardScaler()),
+        ('clf', SVC(kernel='rbf', C=1.0, random_state=0))
+    ])
+    return svm.fit(X, y)
+
+svm = train_model()
 
 
-X = [feature_set(p, s[0]) for p in points for s in dataset.values()]
-y = [s[1][p] for p in points for s in dataset.values()]
-
-X = np.array(X)
-y = np.array(y)
-
-sc = StandardScaler()
-sc.fit(X)
-X_std = sc.transform(X)
-
-svm = SVC(kernel='rbf', C=1.0, random_state=0)
-svm.fit(X_std, y)
-
-
-def eveluate_model(grid):
+def eveluate_model(grid, feature_selection=feature_set, model=svm):
     """For a given grid, return the policy for that grid
        Parameters
        ----------
@@ -35,23 +36,16 @@ def eveluate_model(grid):
        Return:
        policy: type-dictionary, for states (1,1) up to (6,6)
        """
-    X = np.array([feature_set(p, grid) for p in points])
-    X_std = sc.transform(X)
-    return {(p[0], p[1]): v for p, v in zip(points, svm.predict(X_std))}
+    X = np.array([feature_selection(p, grid) for p in points])
+    return {(p[0], p[1]): v for p, v in zip(points, model.predict(X))}
 
 
-def check_accurcy():
+def check_accurcy(dataset='test_data', model=eveluate_model):
 
-    testset = pickle.load(open('test_data.p', 'rb'))
+    testset = pickle.load(open(dataset + '.p', 'rb'))
+    test_y = [i[1][p] for i in testset.values() for p in points]
 
-    test_y = np.array([i[1][p] for p in points for i in testset.values()])
-
-    predicted_y = []
-    for i in testset.values():
-        em = eveluate_model(i[0])
-        predicted_y += [em[p] for p in points]
-
-    # predicted_y = [eveluate_model(i[0]) for i in testset.values()]
-    # predicted_y = np.array(reduce(operator.add, predicted_y))
+    eve_models = [model(i[0]) for i in testset.values()]
+    predicted_y = [pre[p] for pre in eve_models for p in points]
 
     return accuracy_score(predicted_y, test_y)

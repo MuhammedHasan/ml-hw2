@@ -1,13 +1,10 @@
 # -*- coding: utf-8 -*-
 import pickle
+import learning_phase
 
 
-dataset = pickle.load(open('training_data.p', 'rb'))
-
-for j in dataset.values():
-    for i in j[0]:
-        print i
-    print
+svm = learning_phase.train_model(
+    feature_selection=learning_phase.custom_feature_set)
 
 
 def eveluate_model(grid):
@@ -18,5 +15,5 @@ def eveluate_model(grid):
        Return:
        policy: type-dictionary, for states (1,1) up to (6,6)
        """
-    policy = {}
-    return policy
+    return learning_phase.eveluate_model(
+        grid, feature_selection=learning_phase.custom_feature_set, model=svm)
