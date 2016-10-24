@@ -1,7 +1,7 @@
 class Grid:
 
-    def __init__(self, size=(3, 4), walls=[(1, 1)],
-                 exits={(0, 3): 1, (1, 3): -1}, start=(3, 0)):
+    def __init__(self, size=(8, 8), walls=[],
+                 exits={(0, 3): 1, (1, 3): -1}, start=(6, 0)):
         self.V = [[0 for i in range(size[1])] for i in range(size[0])]
         self.walls = walls
         self.exits = exits

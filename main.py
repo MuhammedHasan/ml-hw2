@@ -27,15 +27,21 @@
 #
 # # print dataset[0][1]
 
-import logging
+from grid import Grid
+from mdp import MarkowModel
+from feature_extraction import get_exits_from_grid
+import pickle
+import time
+import threading
 
-# Get the top-level logger object
-log = logging.getLogger()
 
-# make it print to the console.
-console = logging.StreamHandler()
-log.addHandler(console)
-log.warn('Citizens of Earth, be warned!')
-print 'a'
-# emit a warning to the puny Humans
-log.warn('Citizens of Earth, be warned!')
+dataset = pickle.load(open('training_data.p', 'rb'))
+testset = pickle.load(open('test_data.p', 'rb'))
+
+print len(testset)
+
+for i in dataset.values():
+    grid = i[0]
+    g = Grid(exits=get_exits_from_grid(grid))
+    mm = MarkowModel(g, -1)
+    mm.optimal_polity()

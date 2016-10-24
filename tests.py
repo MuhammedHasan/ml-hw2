@@ -1,8 +1,11 @@
 import unittest
+import cPickle as pickle
+
 import feature_extraction
 import learning_phase
-import cPickle as pickle
 import custom_model
+from grid import Grid
+from mdp import MarkowModel
 
 
 class TestFeatureExtraction(unittest.TestCase):
@@ -41,6 +44,14 @@ class TestFeatureExtraction(unittest.TestCase):
 
         f9 = feature_extraction.feature_set_3(self.point1, self.matrix)
         self.assertAlmostEqual(f9, 5.83095189)
+
+    def tests_get_exits_from_grid(self):
+        exists = feature_extraction.get_exits_from_grid(self.matrix)
+        self.assertEqual(exists[0, 0], -10)
+        self.assertEqual(exists[2, 2], -5)
+        self.assertEqual(exists[3, 2], -5)
+        self.assertEqual(exists[4, 1], -5)
+        self.assertEqual(exists[6, 6], 30)
 
 
 class TestLearningPhase(unittest.TestCase):
@@ -92,6 +103,7 @@ class TestCustomModel(unittest.TestCase):
         print 'cross validation accuracy:', cro_val_acc
         print 'test accuracy:', learning_phase.check_accurcy(
             model=custom_model.eveluate_model)
+
 
 if __name__ == '__main__':
     unittest.main()
