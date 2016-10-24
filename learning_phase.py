@@ -12,7 +12,7 @@ from sklearn.pipeline import Pipeline
 points = list(itertools.product(range(1, 7), range(1, 7)))
 
 
-def train_model(feature_selection=feature_set):
+def train_model(feature_selection=feature_set, C=1.0):
     dataset = pickle.load(open('training_data.p', 'rb'))
 
     X = np.array([feature_selection(p, s[0])
@@ -21,7 +21,7 @@ def train_model(feature_selection=feature_set):
 
     svm = Pipeline([
         ('scaler', StandardScaler()),
-        ('clf', SVC(kernel='rbf', C=1.0, random_state=0))
+        ('clf', SVC(kernel='rbf', C=C, random_state=0))
     ])
     return svm.fit(X, y)
 
