@@ -41,13 +41,13 @@ class Grid:
     def _pre_outcome_of_action(self, i, j, action):
         outcomes = dict()
         if action == '^':
-            outcomes = {(i - 1, j): 0.8, (i, j - 1): 0.1, (i, j + 1): 0.1}
+            outcomes = {(i - 1, j): 0.70, (i, j - 1): 0.15, (i, j + 1): 0.15}
         elif action == 'v':
-            outcomes = {(i + 1, j): 0.8, (i, j - 1): 0.1, (i, j + 1): 0.1}
+            outcomes = {(i + 1, j): 0.70, (i, j - 1): 0.15, (i, j + 1): 0.15}
         elif action == '<':
-            outcomes = {(i, j - 1): 0.8, (i + 1, j): 0.1, (i - 1, j): 0.1}
+            outcomes = {(i, j - 1): 0.70, (i + 1, j): 0.15, (i - 1, j): 0.15}
         elif action == '>':
-            outcomes = {(i, j + 1): 0.8, (i + 1, j): 0.1, (i - 1, j): 0.1}
+            outcomes = {(i, j + 1): 0.70, (i + 1, j): 0.15, (i - 1, j): 0.15}
         return outcomes
 
     def __str__(self):
