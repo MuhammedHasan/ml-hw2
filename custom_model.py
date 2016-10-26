@@ -4,7 +4,8 @@ import learning_phase
 
 
 svm = learning_phase.train_model(
-    feature_selection=learning_phase.custom_feature_set, C=1000.0)
+    feature_selection=learning_phase.custom_feature_set,
+    C=1000.0, filename="custom_model.p")
 
 
 def eveluate_model(grid):

@@ -8,13 +8,16 @@ from feature_extraction import *
 import itertools
 from sklearn.metrics import accuracy_score
 from sklearn.pipeline import Pipeline
+import os.path
 
 points = list(itertools.product(range(1, 7), range(1, 7)))
 
 
-def train_model(feature_selection=feature_set, C=1.0):
-    dataset = pickle.load(open('training_data.p', 'rb'))
+def train_model(feature_selection=feature_set, C=1.0, filename="model.p"):
+    if os.path.isfile(filename):
+        return pickle.load(open(filename, 'rb'))
 
+    dataset = pickle.load(open('training_data.p', 'rb'))
     X = np.array([feature_selection(p, s[0])
                   for s in dataset.values() for p in points])
     y = np.array([s[1][p] for s in dataset.values() for p in points])
@@ -23,7 +26,11 @@ def train_model(feature_selection=feature_set, C=1.0):
         ('scaler', StandardScaler()),
         ('clf', SVC(kernel='rbf', C=C, random_state=0))
     ])
-    return svm.fit(X, y)
+
+    model = svm.fit(X, y)
+    pickle.dump(model, open(filename, 'wb'))
+
+    return model
 
 svm = train_model()
 
